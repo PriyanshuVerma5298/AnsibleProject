@@ -1,7 +1,0 @@
-#cloud-config
-package_update: true
-packages:
-  - docker.io
-runcmd:
-  - [ bash, -lc, "usermod -aG docker azureuser" ]
-  - [ bash, -lc, "mkdir -p /home/azureuser/project/demo_app" ]

@@ -1,0 +1,11 @@
+groups:
+  - name: demo.rules
+    rules:
+      - alert: HTTPProbeDown
+        expr: probe_success == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "HTTP probe failed for {{ $labels.instance }}"
+          description: "Probe of {{ $labels.instance }} has failed (value={{ $value }})"

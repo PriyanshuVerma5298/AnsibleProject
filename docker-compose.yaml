@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml:ro
+    command: --config.file=/etc/prometheus/prometheus.yml --web.listen-address=:9090
+    ports:
+      - "9090:9090"
+    depends_on:
+      - blackbox
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    volumes:
+      - ./alertmanager/config.yml:/etc/alertmanager/config.yml:ro
+    command: --config.file=/etc/alertmanager/config.yml
+    ports:
+      - "9093:9093"
+
+  blackbox:
+    image: prom/blackbox-exporter:latest
+    ports:
+      - "9115:9115"
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+
+  nginx-demo:
+    image: nginx:stable
+    container_name: nginx-demo
+    ports:
+      - "8080:80"
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - "9100:9100"
+
+  automation:
+    image: python:3.10-slim
+    volumes:
+      - ./automation:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./ansible:/ansible
+      - ./jira:/jira
+    working_dir: /app
+    command: bash -c "pip install -r requirements.txt && python prometheus_webhook.py"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - nginx-demo
+    env_file:
+      - .env
+

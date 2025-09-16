@@ -1,9 +1,0 @@
-#cloud-config
-package_update: true
-packages:
-  - python3
-  - python3-pip
-  - git
-runcmd:
-  - [ bash, -lc, "pip3 install ansible flask requests pyyaml" ]
-  - [ bash, -lc, "mkdir -p /home/azureuser/project/ansible" ]

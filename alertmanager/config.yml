@@ -1,0 +1,7 @@
+global: {}
+route:
+  receiver: 'automation-webhook'
+receivers:
+  - name: 'automation-webhook'
+    webhook_configs:
+      - url: 'http://automation:5000/webhook'
